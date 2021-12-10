@@ -5,3 +5,4 @@
 файлы override.tf, override.tf.json и * _override.tf c * _override.tf.json
 также .terraformrc и terraform.rc
 
+test test
