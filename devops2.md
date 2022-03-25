@@ -37,23 +37,66 @@
 В прошлый рабочий день мы создавали скрипт, позволяющий опрашивать веб-сервисы и получать их IP. К уже реализованному функционалу нам нужно добавить возможность записи JSON и YAML файлов, описывающих наши сервисы. Формат записи JSON по одному сервису: `{ "имя сервиса" : "его IP"}`. Формат записи YAML по одному сервису: `- имя сервиса: его IP`. Если в момент исполнения скрипта меняется IP у сервиса - он должен так же поменяться в yml и json файле.
 
 ### Ваш скрипт:
-```python
-???
+```
+##!/usr/bin/env python3
+
+import socket as s
+import datetime as dt
+import os
+import json
+import yaml
+
+outputlog  = os.path.join("C:\\", "Users", "alexa", "Downloads", "error.log")
+js_out = "js.json"
+ya_out = "ya.yaml"
+
+services = {'drive.google.com':'0.0.0.0', 'mail.google.com':'0.0.0.0', 'google.com':'0.0.0.0'}
+
+
+for host in services:
+    ip = s.gethostbyname(host)
+
+    if ip != services[host]:
+        with open(outputlog,'a') as fl:
+            print(str(dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) +' [ERROR] ' + str(host) +' IP mistmatch: '+services[host]+' '+ip, file=fl)
+        
+        services[host]=ip
+
+with open(js_out, "w") as j_data:
+         json.dump(services, j_data, indent=2)
+
+with open(ya_out,"w") as y_data:
+  y_data.write(yaml.dump(services,explicit_start=True, explicit_end=True))
+
+for host in services:
+    print({host:services[host]})
 ```
 
 ### Вывод скрипта при запуске при тестировании:
 ```
-???
+C:\Users\alexa\Downloads>python C:\Users\alexa\Downloads\11.py
+{'drive.google.com': '173.194.222.194'}
+{'mail.google.com': '74.125.131.18'}
+{'google.com': '173.194.220.102'}
 ```
 
 ### json-файл(ы), который(е) записал ваш скрипт:
-```json
-???
+```
+{
+  "drive.google.com": "173.194.222.194",
+  "mail.google.com": "74.125.131.18",
+  "google.com": "173.194.220.102"
+}
 ```
 
 ### yml-файл(ы), который(е) записал ваш скрипт:
-```yaml
-???
+```
+---
+drive.google.com: 173.194.222.194
+google.com: 173.194.220.102
+mail.google.com: 74.125.131.18
+...
+
 ```
 
 ## Дополнительное задание (со звездочкой*) - необязательно к выполнению
